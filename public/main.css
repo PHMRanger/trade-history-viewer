@@ -1,0 +1,53 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --red: #f21c00;
+  --blue: #0001f2;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table, div {
+  width: 768px;
+  margin: auto;
+  padding: 12px;
+}
+
+.sent, .received {
+  cursor: pointer;
+}
+
+/* .sent:hover {
+  background-color: var(--red);
+}
+
+.received:hover {
+  background-color: var(--blue);
+} */
+
+#refresh {
+  text-align: center;
+}
+
+#error {
+  color: var(--red);
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+th span {
+  background-color: var(--blue);
+  color: #fff;
+
+  font-size: 1.3rem;
+  font-weight: bold;
+}

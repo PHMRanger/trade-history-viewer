@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <th><span>Trade ID</span></th>
+    <th><span>Other's Steamid</span></th>
+    <th><span>Sent</span></th>
+    <th><span>Received</span></th>
+    <th><span>Happened At</span></th>
+  </tr>
+  <% trades.forEach(trade => { %>
+    <tr>
+      <td><%= trade.id %></td>
+      <td><%= trade.other %></td>
+      <td class="sent"><%= (trade.sent / 100).toFixed(2) %></td>
+      <td class="received"><%= (trade.received / 100).toFixed(2) %></td>
+      <td><%= new Date(trade.created_at * 1000).toLocaleDateString("en-US") %></td>
+    </tr>
+  <% }); %>
+</table>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Trade History</title>
+    <link rel="stylesheet" href="/main.css">
+  </head>
+  <body>
+    <% if (trades.length) { %>
+      <div id="refresh">
+        <form action="/<%= key %>/refresh" method="POST">
+        If you can't see the most recent trades, you can try to refresh. <button>Refresh</button>
+        </form>
+      </div>
+    <% } %>
+    <% if (!trades.length) { %>
+      <div id="refresh">
+        <form action="/<%= key %>/refresh" method="POST">
+        There are no trades available for the api key. You can try to refresh. <button>Refresh</button>
+        </form>
+      </div>
+    <% } %>
+    <%- include("table"); -%>
+    <script src="/interactive.js"></script>
+  </body>
+</html>

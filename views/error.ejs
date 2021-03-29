@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Something failed...</title>
+    <link rel="stylesheet" href="/main.css">
+  </head>
+  <body>
+    <div id="refresh">
+      Failed to get trade history for this key: <b id="error"><%= error %></b>
+    </div>
+    <%- include("table", { trades: [] }); -%>
+  </body>
+</html>
+
