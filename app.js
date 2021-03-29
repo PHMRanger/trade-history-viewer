@@ -24,7 +24,7 @@ const migrate = () => {
     "CREATE TABLE trades (" +
       "id bigint PRIMARY KEY," +
       "key varchar NOT NULL," +
-      "other bigint NOT NULL," +
+      "other blob NOT NULL," +
       "sent int NOT NULL," +
       "received int NOT NULL," +
       "created_at bigint NOT NULL)",
@@ -38,47 +38,47 @@ const migrate = () => {
       "price int NOT NULL)",
     () => {}
   );
+
+  return {
+    add_price: db.prepare("INSERT INTO prices VALUES (?, ?, ?)"),
+    add_trade: db.prepare("INSERT INTO trades VALUES (?, ?, ?, ?, ?, ?)"),
+    get_price: db.prepare("SELECT price FROM prices WHERE name = ?"),
+    delete_trades: db.prepare("DELETE FROM trades WHERE key = ?"),
+    get_price_fn: (name) => {
+      Queries.get_price.reset();
+      Queries.get_price.run(name);
+      return new Promise((res, rej) =>
+        Queries.get_price.all((err, rows) => {
+          err && rej(err);
+          !err && res(rows[0] ? rows[0].price : null);
+        })
+      );
+    },
+    get_trades: db.prepare("SELECT * FROM trades WHERE key = ?"),
+    get_trades_fn: (key) => {
+      Queries.get_trades.reset();
+      Queries.get_trades.run(key);
+      return new Promise((res, rej) => {
+        Queries.get_trades.all((err, rows) => {
+          err && rej(err);
+          !err && res(rows);
+        });
+      });
+    },
+    cached_trades(key) {
+      return new Promise((res, rej) => {
+        const results = [];
+        db.each(`SELECT id FROM trades WHERE key = ${key}`, (err, row) => {
+          err && rej(err);
+          !err && row && results.push(row);
+        });
+        res(results);
+      });
+    },
+  };
 };
 
-migrate();
-
-let Queries = {
-  add_price: db.prepare("INSERT INTO prices VALUES (?, ?, ?)"),
-  add_trade: db.prepare("INSERT INTO trades VALUES (?, ?, ?, ?, ?, ?)"),
-  get_price: db.prepare("SELECT price FROM prices WHERE name = ?"),
-  delete_trades: db.prepare("DELETE FROM trades WHERE key = ?"),
-  get_price_fn: (name) => {
-    Queries.get_price.reset();
-    Queries.get_price.run(name);
-    return new Promise((res, rej) =>
-      Queries.get_price.all((err, rows) => {
-        err && rej(err);
-        !err && res(rows[0] ? rows[0].price : null);
-      })
-    );
-  },
-  get_trades: db.prepare("SELECT * FROM trades WHERE key = ?"),
-  get_trades_fn: (key) => {
-    Queries.get_trades.reset();
-    Queries.get_trades.run(key);
-    return new Promise((res, rej) => {
-      Queries.get_trades.all((err, rows) => {
-        err && rej(err);
-        !err && res(rows);
-      });
-    });
-  },
-  cached_trades(key) {
-    return new Promise((res, rej) => {
-      const results = [];
-      db.each(`SELECT id FROM trades WHERE key = ${key}`, (err, row) => {
-        err && rej(err);
-        !err && row && results.push(row);
-      });
-      res(results);
-    });
-  },
-};
+const Queries = migrate();
 
 const update_prices = async () => {
   db.run("DELETE FROM prices");
