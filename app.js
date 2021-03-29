@@ -98,8 +98,11 @@ const trade_price_total = async (items, desc_map) => {
     return 0;
   }
 
-  const queries = items.map(({ classid }) => {
-    return Queries.get_price_fn(desc_map[classid]);
+  const queries = items.map(({ classid, amount }) => {
+    return async () => {
+      const price = await Queries.get_price_fn(desc_map[classid]);
+      return price * amount;
+    };
   });
 
   const all = await Promise.all(queries);
